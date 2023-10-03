@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Remove album</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <h1>Remove album:</h1>
+    <form th:action="@{/removealbum}" th:object="${albumform}" method="POST">
+        <p>
+            Title:
+            <input type="text" th:field="*{nameOfAlbum}" />
+        </p>
+        <p>
+            Group:
+            <input type="text" th:field="*{group}" />
+        </p>
+        <input class="button-main-page" type="submit" value="Remove" />
+    </form>
+    <div th:if="${errorMessage}" th:utext="${errorMessage}"
+         style="color:red;font-style:italic;">
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Album list</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
+</head>
+<body>
+<h1>Album list</h1>
+<h2>
+    <a href="addalbum">Add new album</a>
+</h2>
+<h2>
+    <a href="removealbum">Remove album</a>
+</h2>
+<br/><br/>
+<div class="container">
+    <table class="container" border="1">
+        <tr>
+            <th><h1>Title</h1></th>
+            <th><h1>Group</h1></th>
+            <th><h1>Edit</h1></th> <!-- Добавляем заголовок столбца для кнопки "Edit" -->
+        </tr>
+        <tr th:each="album : ${albums}">
+            <td th:utext="${album.nameOfAlbum}">...</td>
+            <td th:utext="${album.group}">...</td>
+            <td>
+                <a th:href="@{/editalbum}">Edit</a>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

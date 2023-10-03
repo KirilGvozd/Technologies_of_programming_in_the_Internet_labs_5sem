@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Album</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
+</head>
+<body>
+<h1>Edit Album</h1>
+<br/><br/>
+<div class="container">
+    <form action="/editalbum" method="post" th:object="${album}">
+        <table class="container" border="1">
+            <tr>
+                <td><label for="nameOfAlbum">Title:</label></td>
+                <td><input type="text" id="nameOfAlbum" name="nameOfAlbum" th:field="*{nameOfAlbum}" required/></td>
+            </tr>
+            <tr>
+                <td><label for="group">Group:</label></td>
+                <td><input type="text" id="group" name="group" th:field="*{group}" required/></td>
+            </tr>
+        </table>
+        <br/>
+        <input type="submit" value="Save"/>
+        <a href="/albumlist">Cancel</a> <!-- Добавляем ссылку на страницу списка альбомов -->
+    </form>
+</div>
+</body>
+</html>

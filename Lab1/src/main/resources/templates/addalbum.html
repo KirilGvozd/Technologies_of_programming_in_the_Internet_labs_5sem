@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add person</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <h1>New album:</h1>
+    <form th:action="@{/addalbum}" th:object="${albumform}" method="POST">
+        <p>
+            Title:
+            <input type="text" th:field="*{nameOfAlbum}" />
+        </p>
+        <p>
+            Group:
+            <input type="text" th:field="*{group}" />
+        </p>
+        <input class="button-main-page" type="submit" value="Add" />
+    </form>
+    <div th:if="${errorMessage}" th:utext="${errorMessage}"
+         style="color:red;font-style:italic;">
+    </div>
+</div>
+</body>
+</html>
