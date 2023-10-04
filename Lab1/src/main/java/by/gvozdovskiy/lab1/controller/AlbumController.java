@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
@@ -109,48 +110,50 @@ public class AlbumController {
         }
 
         model.addAttribute("errorMessage", errorMessage);
-        modelAndView.setViewName("addalbum");
+        modelAndView.setViewName("removealbum");
         return modelAndView;
 
 
     }
 
-    @RequestMapping(value = {"/editalbum"}, method = RequestMethod.GET)
-    public ModelAndView showEditPersonPage(Model model) {
-        ModelAndView modelAndView = new ModelAndView("removealbum");
-        AlbumForm albumForm = new AlbumForm();
-        model.addAttribute("albumform", albumForm);
 
-        return modelAndView;
-    }
+    @RequestMapping(value = "/editalbum", method = RequestMethod.GET)
+    public ModelAndView editAlbumPage(Model model, @RequestParam("nameOfAlbum") String nameOfAlbum, @RequestParam("group") String group) {
+        ModelAndView modelAndView = new ModelAndView("editalbum");
+        Album albumToEdit = null;
 
-    @RequestMapping(value = {"/editalbum"}, method = RequestMethod.POST)
-    public ModelAndView editAlbum(Model model, @ModelAttribute("albumform") AlbumForm albumform) {
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("albumlist");
-        String title = albumform.getNameOfAlbum();
-        String group = albumform.getGroup();
-
-        if (title != null && !title.isEmpty() && group != null && !group.isEmpty()) {
-            // Поиск альбома по названию
-            for (Album album : albums) {
-                if (album.getNameOfAlbum().equals(title)) {
-                    // Обновление данных альбома
-                    album.setGroup(group);
-                    model.addAttribute("albums", albums);
-                    return modelAndView;
-                }
+        for (Album album : albums) {
+            if (album.getNameOfAlbum().equals(nameOfAlbum) && album.getGroup().equals(group)) {
+                albumToEdit = album;
+                break;
             }
-
-            // Если альбом с заданным названием не найден, можно обработать это как ошибку
-            model.addAttribute("errorMessage", "Альбом с названием " + title + " не найден.");
-            modelAndView.setViewName("editalbum");
-            return modelAndView;
         }
 
-        model.addAttribute("errorMessage", errorMessage);
-        modelAndView.setViewName("editalbum");
+        if (albumToEdit != null) {
+            modelAndView.addObject("album", albumToEdit);
+        } else {
+            modelAndView.addObject("errorMessage", "Альбом не найден.");
+        }
+
         return modelAndView;
     }
+
+    @RequestMapping(value = "/editalbum", method = RequestMethod.POST)
+    public ModelAndView saveEditedAlbum(Model model, @ModelAttribute("album") Album editedAlbum) {
+        ModelAndView modelAndView = new ModelAndView("redirect:/allalbums");
+
+        if (editedAlbum != null) {
+            for (Album album : albums) {
+                if (album.getNameOfAlbum().equals(editedAlbum.getNameOfAlbum())) {
+                    album.setNameOfAlbum(editedAlbum.getNameOfAlbum());
+                    album.setGroup(editedAlbum.getGroup());
+                    break;
+                }
+            }
+        }
+
+        return modelAndView;
+    }
+
 
 }

@@ -25,7 +25,7 @@
             <td th:utext="${album.nameOfAlbum}">...</td>
             <td th:utext="${album.group}">...</td>
             <td>
-                <a th:href="@{/editalbum}">Edit</a>
+                <a th:href="@{'/editalbum?nameOfAlbum=' + ${album.nameOfAlbum} + '&group=' + ${album.group}}">Edit</a>
             </td>
         </tr>
     </table>
