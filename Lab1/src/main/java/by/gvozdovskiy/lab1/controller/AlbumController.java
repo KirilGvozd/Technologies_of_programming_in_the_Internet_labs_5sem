@@ -1,20 +1,19 @@
 package by.gvozdovskiy.lab1.controller;
 import by.gvozdovskiy.lab1.forms.AlbumForm;
 import by.gvozdovskiy.lab1.model.Album;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-
+@Slf4j
+@RequestMapping
 
 public class AlbumController {
     private static List<Album> albums = new ArrayList<Album>();
@@ -31,7 +30,8 @@ public class AlbumController {
     @Value("${error.message}")
     private String errorMessage;
 
-    @RequestMapping(value = {"/", "/index"}, method = RequestMethod.GET)
+
+    @GetMapping(value = {"/", "/index"})
     public ModelAndView index(Model model) {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("index");
@@ -40,7 +40,7 @@ public class AlbumController {
         return modelAndView;
     }
 
-    @RequestMapping(value = {"/allalbums"}, method = RequestMethod.GET)
+    @GetMapping(value = {"/allalbums"})
     public ModelAndView personList(Model model) {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("albumlist");
@@ -49,7 +49,7 @@ public class AlbumController {
         return modelAndView;
     }
 
-    @RequestMapping(value = {"/addalbum"}, method = RequestMethod.GET)
+    @GetMapping(value = {"/addalbum"})
     public ModelAndView showAddPersonPage(Model model) {
         ModelAndView modelAndView = new ModelAndView("addalbum");
         AlbumForm albumForm = new AlbumForm();
@@ -60,7 +60,7 @@ public class AlbumController {
 //    @PostMapping("/addbook")
 //    GetMapping("/")
 
-    @RequestMapping(value = {"/addalbum"}, method = RequestMethod.POST)
+    @PostMapping(value = {"/addalbum"})
     public ModelAndView savePerson(Model model, @ModelAttribute("albumform") AlbumForm albumform) {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("albumlist");
@@ -68,10 +68,28 @@ public class AlbumController {
         String group = albumform.getGroup();
 
         if (title != null && !title.isEmpty() && group != null && !group.isEmpty()) {
+            // Создайте новый альбом
             Album newAlbum = new Album(title, group);
-            albums.add(newAlbum);
-            model.addAttribute("albums", albums);
-            return modelAndView;
+
+            // Проверьте, не существует ли такой альбом уже в списке
+            boolean albumExists = false;
+            for (Album album : albums) {
+                if (album.getNameOfAlbum().equals(newAlbum.getNameOfAlbum()) && album.getGroup().equals(newAlbum.getGroup())) {
+                    albumExists = true;
+                    break;
+                }
+            }
+
+            if (!albumExists) {
+                albums.add(newAlbum);
+                model.addAttribute("albums", albums);
+                return modelAndView;
+            } else {
+                // Если альбом уже существует, установите сообщение об ошибке
+                model.addAttribute("errorMessage", "Альбом с таким названием и группой уже существует.");
+                modelAndView.setViewName("addalbum");
+                return modelAndView;
+            }
         }
 
         model.addAttribute("errorMessage", errorMessage);
@@ -80,7 +98,8 @@ public class AlbumController {
     }
 
 
-    @RequestMapping(value = {"/removealbum"}, method = RequestMethod.GET)
+
+    @GetMapping(value = {"/removealbum"})
     public ModelAndView showRemovePersonPage(Model model) {
         ModelAndView modelAndView = new ModelAndView("removealbum");
         AlbumForm albumForm = new AlbumForm();
@@ -90,7 +109,7 @@ public class AlbumController {
     }
 
 
-    @RequestMapping(value = {"/removealbum"}, method = RequestMethod.POST)
+    @PostMapping(value = {"/removealbum"})
     public ModelAndView removePerson(Model model, @ModelAttribute("albumform") AlbumForm albumform) {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("albumlist");
@@ -103,6 +122,10 @@ public class AlbumController {
                 if (album.equals(albumToRemove)) {
                     albums.remove(album);
                     break;
+                } else {
+                    model.addAttribute("errorMessage", "Альбома с таким названием и исполнителем не существует");
+                    modelAndView.setViewName("removealbum");
+                    return modelAndView;
                 }
             }
             model.addAttribute("albums", albums);
@@ -117,7 +140,7 @@ public class AlbumController {
     }
 
 
-    @RequestMapping(value = "/editalbum", method = RequestMethod.GET)
+    @GetMapping(value = "/editalbum")
     public ModelAndView editAlbumPage(Model model, @RequestParam("nameOfAlbum") String nameOfAlbum, @RequestParam("group") String group) {
         ModelAndView modelAndView = new ModelAndView("editalbum");
         Album albumToEdit = null;
@@ -138,7 +161,7 @@ public class AlbumController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/editalbum", method = RequestMethod.POST)
+    @PostMapping(value = "/editalbum")
     public ModelAndView saveEditedAlbum(Model model, @ModelAttribute("album") Album editedAlbum) {
         ModelAndView modelAndView = new ModelAndView("redirect:/allalbums");
 
