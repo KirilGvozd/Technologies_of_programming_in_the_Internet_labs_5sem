@@ -36,7 +36,7 @@ public class AlbumController {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("index");
         model.addAttribute("message", message);
-
+        log.info("/index was called");
         return modelAndView;
     }
 
@@ -45,7 +45,7 @@ public class AlbumController {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("albumlist");
         model.addAttribute("albums", albums);
-
+        log.info("/allalbums was called");
         return modelAndView;
     }
 
@@ -54,7 +54,7 @@ public class AlbumController {
         ModelAndView modelAndView = new ModelAndView("addalbum");
         AlbumForm albumForm = new AlbumForm();
         model.addAttribute("albumform", albumForm);
-
+        log.info("/addalbum was called");
         return modelAndView;
     }
 //    @PostMapping("/addbook")
@@ -104,7 +104,7 @@ public class AlbumController {
         ModelAndView modelAndView = new ModelAndView("removealbum");
         AlbumForm albumForm = new AlbumForm();
         model.addAttribute("albumform", albumForm);
-
+        log.info("/remove was called");
         return modelAndView;
     }
 
@@ -157,7 +157,7 @@ public class AlbumController {
         } else {
             modelAndView.addObject("errorMessage", "Альбом не найден.");
         }
-
+        log.info("/editalbum was called");
         return modelAndView;
     }
 
